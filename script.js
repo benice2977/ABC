@@ -12,7 +12,7 @@ function addTask() {
     var taskList = document.getElementById("taskList");
 
     var li = document.createElement("li");
-    var timeStamp = new Date().toLocaleString(); 
+    var timeStamp = new Date().toLocaleString(); // 獲取當前日期和時間
     li.innerHTML = taskText + '<span class="timeStamp">（新增於: ' + timeStamp + '）</span>' + '<button class="delete" onclick="deleteTask(this)">刪除</button><br>';
     
     var subtaskSection = document.createElement("div");
@@ -59,15 +59,28 @@ function addSubtask(input, subtaskSection) {
     }
 
     var subtaskLi = document.createElement("li");
-    subtaskLi.textContent = subtaskText;
-    subtaskLi.addEventListener("click", function() {
-        subtaskLi.classList.toggle("completed");
-        saveTasks(); 
-    });
+    var timeStamp = new Date().toLocaleString(); // 記錄子任務的新增時間
+    subtaskLi.innerHTML = subtaskText + '<span class="timeStamp">（新增於: ' + timeStamp + '）</span>' + 
+        '<button class="complete" onclick="completeSubtask(this)">完成</button>' + 
+        '<button class="delete" onclick="deleteSubtask(this)">刪除</button>';
 
     subtaskSection.appendChild(subtaskLi);
     input.value = "";
 
+    saveTasks(); 
+}
+
+// 標記子任務為完成
+function completeSubtask(button) {
+    var subtask = button.parentElement;
+    subtask.classList.toggle("completed");
+    saveTasks(); 
+}
+
+// 刪除子任務
+function deleteSubtask(button) {
+    var subtask = button.parentElement;
+    subtask.remove();
     saveTasks(); 
 }
 
@@ -80,11 +93,13 @@ function saveTasks() {
         var timeStamp = task.querySelector('.timeStamp').textContent;
         var completed = task.classList.contains('completed');
 
+        // 子任務處理
         var subtasks = [];
         var subtaskElements = task.querySelectorAll('.subtasks li');
         subtaskElements.forEach(function(subtask) {
             subtasks.push({
-                text: subtask.textContent,
+                text: subtask.childNodes[0].textContent,
+                timeStamp: subtask.querySelector('.timeStamp').textContent,
                 completed: subtask.classList.contains('completed')
             });
         });
@@ -131,14 +146,12 @@ function loadTasks() {
 
             task.subtasks.forEach(function(subtask) {
                 var subtaskLi = document.createElement("li");
-                subtaskLi.textContent = subtask.text;
+                subtaskLi.innerHTML = subtask.text + '<span class="timeStamp">' + subtask.timeStamp + '</span>' + 
+                    '<button class="complete" onclick="completeSubtask(this)">完成</button>' + 
+                    '<button class="delete" onclick="deleteSubtask(this)">刪除</button>';
                 if (subtask.completed) {
                     subtaskLi.classList.add('completed');
                 }
-                subtaskLi.addEventListener("click", function() {
-                    subtaskLi.classList.toggle("completed");
-                    saveTasks();
-                });
                 subtaskSection.appendChild(subtaskLi);
             });
 
