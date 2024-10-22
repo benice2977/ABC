@@ -97,10 +97,14 @@ function saveTasks() {
         var subtasks = [];
         var subtaskElements = task.querySelectorAll('.subtasks li');
         subtaskElements.forEach(function(subtask) {
+            var subtaskText = subtask.childNodes[0].textContent;
+            var subtaskTimeStamp = subtask.querySelector('.timeStamp').textContent;
+            var subtaskCompleted = subtask.classList.contains('completed');
+            
             subtasks.push({
-                text: subtask.childNodes[0].textContent,
-                timeStamp: subtask.querySelector('.timeStamp').textContent,
-                completed: subtask.classList.contains('completed')
+                text: subtaskText,
+                timeStamp: subtaskTimeStamp,
+                completed: subtaskCompleted
             });
         });
 
