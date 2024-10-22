@@ -41,7 +41,6 @@ function addTask() {
     saveTasks(); 
 }
 
-// 完成主任務
 function completeTask(button) {
     var task = button.parentElement;
     task.classList.toggle("completed");
@@ -76,14 +75,12 @@ function addSubtask(input, subtaskSection) {
     saveTasks(); 
 }
 
-// 完成子任務
 function completeSubtask(button) {
     var subtask = button.parentElement;
     subtask.classList.toggle("completed");
     saveTasks(); 
 }
 
-// 刪除子任務
 function deleteSubtask(button) {
     var subtask = button.parentElement;
     subtask.remove();
@@ -99,7 +96,6 @@ function saveTasks() {
         var timeStamp = task.querySelector('.timeStamp').textContent;
         var completed = task.classList.contains('completed');
 
-        // 子任務處理
         var subtasks = [];
         var subtaskElements = task.querySelectorAll('.subtasks span');
         subtaskElements.forEach(function(subtask) {
