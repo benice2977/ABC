@@ -13,7 +13,9 @@ function addTask() {
 
     var li = document.createElement("li");
     var timeStamp = new Date().toLocaleString(); // 獲取當前日期和時間
-    li.innerHTML = taskText + '<span class="timeStamp">（新增於: ' + timeStamp + '）</span>' + '<button class="delete" onclick="deleteTask(this)">刪除</button><br>';
+    li.innerHTML = taskText + '<span class="timeStamp">（新增於: ' + timeStamp + '）</span>' + 
+                   '<button class="completeTask" onclick="completeTask(this)">完成</button>' +
+                   '<button class="delete" onclick="deleteTask(this)">刪除</button><br>';
     
     var subtaskSection = document.createElement("div");
     subtaskSection.classList.add("subtasks");
@@ -33,15 +35,17 @@ function addTask() {
     subtaskSection.appendChild(addSubtaskButton);
     li.appendChild(subtaskSection);
 
-    li.addEventListener("click", function() {
-        li.classList.toggle("completed");
-        saveTasks(); 
-    });
-
     taskList.appendChild(li);
     taskInput.value = "";
 
     saveTasks(); 
+}
+
+// 完成主任務
+function completeTask(button) {
+    var task = button.parentElement;
+    task.classList.toggle("completed");
+    saveTasks();
 }
 
 function deleteTask(button) {
@@ -60,12 +64,29 @@ function addSubtask(input, subtaskSection) {
 
     var subtaskLi = document.createElement("span");
     var timeStamp = new Date().toLocaleString(); // 記錄子任務的新增時間
-    subtaskLi.innerHTML = subtaskText + ' ' + timeStamp + ' ------ ';
-    subtaskLi.style.display = "inline"; // 將子任務設置為行內顯示
+    subtaskLi.innerHTML = subtaskText + '（新增於: ' + timeStamp + '）' + 
+        '<button class="completeSubtask" onclick="completeSubtask(this)">完成</button>' +
+        '<button class="deleteSubtask" onclick="deleteSubtask(this)">刪除</button> ------ ';
+
+    subtaskLi.style.display = "inline-block"; // 子任務以橫向排列
 
     subtaskSection.appendChild(subtaskLi);
     input.value = "";
 
+    saveTasks(); 
+}
+
+// 完成子任務
+function completeSubtask(button) {
+    var subtask = button.parentElement;
+    subtask.classList.toggle("completed");
+    saveTasks(); 
+}
+
+// 刪除子任務
+function deleteSubtask(button) {
+    var subtask = button.parentElement;
+    subtask.remove();
     saveTasks(); 
 }
 
@@ -83,11 +104,13 @@ function saveTasks() {
         var subtaskElements = task.querySelectorAll('.subtasks span');
         subtaskElements.forEach(function(subtask) {
             var subtaskText = subtask.childNodes[0].textContent;
-            var subtaskTimeStamp = subtask.textContent.split(' ')[1];
+            var subtaskTimeStamp = subtask.textContent.split('（新增於: ')[1].split('）')[0];
+            var subtaskCompleted = subtask.classList.contains('completed');
             
             subtasks.push({
                 text: subtaskText,
-                timeStamp: subtaskTimeStamp
+                timeStamp: subtaskTimeStamp,
+                completed: subtaskCompleted
             });
         });
 
@@ -109,7 +132,9 @@ function loadTasks() {
 
         tasks.forEach(function(task) {
             var li = document.createElement("li");
-            li.innerHTML = task.text + '<span class="timeStamp">' + task.timeStamp + '</span>' + '<button class="delete" onclick="deleteTask(this)">刪除</button><br>';
+            li.innerHTML = task.text + '<span class="timeStamp">' + task.timeStamp + '</span>' + 
+                           '<button class="completeTask" onclick="completeTask(this)">完成</button>' +
+                           '<button class="delete" onclick="deleteTask(this)">刪除</button><br>';
             if (task.completed) {
                 li.classList.add('completed');
             }
@@ -133,17 +158,17 @@ function loadTasks() {
 
             task.subtasks.forEach(function(subtask) {
                 var subtaskLi = document.createElement("span");
-                subtaskLi.innerHTML = subtask.text + ' ' + subtask.timeStamp + ' ------ ';
-                subtaskLi.style.display = "inline";
+                subtaskLi.innerHTML = subtask.text + '（新增於: ' + subtask.timeStamp + '）' + 
+                    '<button class="completeSubtask" onclick="completeSubtask(this)">完成</button>' +
+                    '<button class="deleteSubtask" onclick="deleteSubtask(this)">刪除</button> ------ ';
+                subtaskLi.style.display = "inline-block";
+                if (subtask.completed) {
+                    subtaskLi.classList.add('completed');
+                }
                 subtaskSection.appendChild(subtaskLi);
             });
 
             li.appendChild(subtaskSection);
-            li.addEventListener("click", function() {
-                li.classList.toggle("completed");
-                saveTasks();
-            });
-
             document.getElementById("taskList").appendChild(li);
         });
     }
