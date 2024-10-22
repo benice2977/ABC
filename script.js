@@ -58,29 +58,14 @@ function addSubtask(input, subtaskSection) {
         return;
     }
 
-    var subtaskLi = document.createElement("li");
+    var subtaskLi = document.createElement("span");
     var timeStamp = new Date().toLocaleString(); // 記錄子任務的新增時間
-    subtaskLi.innerHTML = subtaskText + '<span class="timeStamp">（新增於: ' + timeStamp + '）</span>' + 
-        '<button class="complete" onclick="completeSubtask(this)">完成</button>' + 
-        '<button class="delete" onclick="deleteSubtask(this)">刪除</button>';
+    subtaskLi.innerHTML = subtaskText + ' ' + timeStamp + ' ------ ';
+    subtaskLi.style.display = "inline"; // 將子任務設置為行內顯示
 
     subtaskSection.appendChild(subtaskLi);
     input.value = "";
 
-    saveTasks(); 
-}
-
-// 標記子任務為完成
-function completeSubtask(button) {
-    var subtask = button.parentElement;
-    subtask.classList.toggle("completed");
-    saveTasks(); 
-}
-
-// 刪除子任務
-function deleteSubtask(button) {
-    var subtask = button.parentElement;
-    subtask.remove();
     saveTasks(); 
 }
 
@@ -95,16 +80,14 @@ function saveTasks() {
 
         // 子任務處理
         var subtasks = [];
-        var subtaskElements = task.querySelectorAll('.subtasks li');
+        var subtaskElements = task.querySelectorAll('.subtasks span');
         subtaskElements.forEach(function(subtask) {
             var subtaskText = subtask.childNodes[0].textContent;
-            var subtaskTimeStamp = subtask.querySelector('.timeStamp').textContent;
-            var subtaskCompleted = subtask.classList.contains('completed');
+            var subtaskTimeStamp = subtask.textContent.split(' ')[1];
             
             subtasks.push({
                 text: subtaskText,
-                timeStamp: subtaskTimeStamp,
-                completed: subtaskCompleted
+                timeStamp: subtaskTimeStamp
             });
         });
 
@@ -149,13 +132,9 @@ function loadTasks() {
             subtaskSection.appendChild(addSubtaskButton);
 
             task.subtasks.forEach(function(subtask) {
-                var subtaskLi = document.createElement("li");
-                subtaskLi.innerHTML = subtask.text + '<span class="timeStamp">' + subtask.timeStamp + '</span>' + 
-                    '<button class="complete" onclick="completeSubtask(this)">完成</button>' + 
-                    '<button class="delete" onclick="deleteSubtask(this)">刪除</button>';
-                if (subtask.completed) {
-                    subtaskLi.classList.add('completed');
-                }
+                var subtaskLi = document.createElement("span");
+                subtaskLi.innerHTML = subtask.text + ' ' + subtask.timeStamp + ' ------ ';
+                subtaskLi.style.display = "inline";
                 subtaskSection.appendChild(subtaskLi);
             });
 
@@ -168,15 +147,4 @@ function loadTasks() {
             document.getElementById("taskList").appendChild(li);
         });
     }
-}
-
-function setDailyReminder() {
-    var reminderTime = document.getElementById("reminderTime").value;
-
-    if (reminderTime === "") {
-        alert("請選擇一個提醒時間。");
-        return;
-    }
-
-    alert("提醒已設置！每日 " + reminderTime + " 會提醒你查看代辦事項。");
 }
