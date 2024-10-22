@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代辦事項清單與提醒</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>代辦事項清單</h1>
+        <input type="text" id="taskInput" placeholder="新增一個事項..." />
+        <button onclick="addTask()">新增事項</button>
+
+        <input type="time" id="reminderTime" placeholder="設定每日提醒時間" />
+        <button onclick="setDailyReminder()">設定提醒</button>
+        
+        <ul id="taskList"></ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
